@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Результаты Поиска</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Результаты Поиска</h2>
+
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <form method="GET" action="{{ url_for('show_vacancies') }}" class="form-inline justify-content-center">
+                    <div class="form-group mx-sm-3 mb-2">
+                        <label for="keyword" class="sr-only">Ключевые слова:</label>
+                        <input type="text" id="keyword" name="keyword" placeholder="Ключевые слова" class="form-control">
+                    </div>
+                    <div class="form-group mx-sm-3 mb-2">
+                        <label for="region" class="sr-only">Город:</label>
+                        <input type="text" id="region" name="region" placeholder="Город" class="form-control">
+                    </div>
+                    <div class="form-group mx-sm-3 mb-2">
+                        <label for="experience" class="sr-only">Опыт:</label>
+                        <input type="text" id="experience" name="experience" placeholder="Опыт" class="form-control">
+                    </div>
+                    <div class="form-group mx-sm-3 mb-2">
+                        <label for="salary_from" class="sr-only">Зарплата От:</label>
+                        <input type="number" id="salary_from" name="salary_from" placeholder="Зарплата От" class="form-control">
+                    </div>
+                    <div class="form-group mx-sm-3 mb-2">
+                        <label for="salary_to" class="sr-only">Зарплата До:</label>
+                        <input type="number" id="salary_to" name="salary_to" placeholder="Зарплата До" class="form-control">
+                    </div>
+                    <div class="form-group mx-sm-3 mb-2">
+                        <label for="currency" class="sr-only">Валюта:</label>
+                        <input type="text" id="currency" name="currency" placeholder="Валюта" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary mb-2">Фильтр</button>
+                </form>
+            </div>
+        </div>
+
+        {% if vacancies %}
+            <p class="text-center mb-3">Found {{ vacancies|length }} vacancies</p>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Название</th>
+                            <th>Компания</th>
+                            <th>Зарплата</th>
+                            <th>Город</th>
+                            <th>Опыт</th>
+                            <th>Занятность</th>
+                            <th>Ссылка</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for vacancy in vacancies %}
+                        <tr>
+                            <td>{{ vacancy[0] }}</td>
+                            <td>{{ vacancy[1] }}</td>
+                            <td>{{ vacancy[2] }} - {{ vacancy[3] }} {{ vacancy[4] }}</td>
+                            <td>{{ vacancy[6] }}</td>
+                            <td>{{ vacancy[7] }}</td>
+                            <td>{{ vacancy[8] }}</td>
+                            <td><a href="{{ vacancy[5] }}" target="_blank">hh.ru</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    {% if page > 1 %}
+                    <li class="page-item"><a class="page-link" href="{{ url_for('show_vacancies', page=page-1, salary_from=request.args.get('salary_from'), salary_to=request.args.get('salary_to'), region=request.args.get('region'), experience=request.args.get('experience'), keyword=request.args.get('keyword'), currency=request.args.get('currency')) }}">Previous</a></li>
+                    {% endif %}
+                    <li class="page-item active"><a class="page-link" href="#">{{ page }}</a></li>
+                    {% if page < total_pages %}
+                    <li class="page-item"><a class="page-link" href="{{ url_for('show_vacancies', page=page+1, salary_from=request.args.get('salary_from'), salary_to=request.args.get('salary_to'), region=request.args.get('region'), experience=request.args.get('experience'), keyword=request.args.get('keyword'), currency=request.args.get('currency')) }}">Next</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% else %}
+            <p class="text-center">No vacancies found.</p>
+        {% endif %}
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
